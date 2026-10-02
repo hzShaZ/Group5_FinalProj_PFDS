@@ -2,8 +2,10 @@ import sys
 import numpy as np
 import pandas as pd
 
-path = sys.argv[1] if len(sys.argv) > 1 else "data/wfp_food_prices_phl_sample.csv"
-df = pd.read_csv(path)
+prices_path = sys.argv[1] if len(sys.argv) > 1 else "data/wfp_food_prices_phl_sample.csv"
+markets_path = sys.argv[2] if len(sys.argv) > 2 else "data/wfp_markets_phl.csv"
+df = pd.read_csv(prices_path)
+mk = pd.read_csv(markets_path)
 n0 = len(df)
 
 df["date"] = pd.to_datetime(df["date"])
@@ -22,9 +24,14 @@ df["comparable_unit"] = df["unit"] == "KG"
 
 df = df.drop(columns=["currency", "usdprice"])
 
+df = df.drop(columns=["market", "admin1", "admin2", "latitude", "longitude"])
+df = df.merge(mk[["market_id", "market", "admin1", "admin2", "latitude", "longitude"]],
+              on="market_id", how="left", validate="many_to_one")
+unmatched = int(df["market"].isna().sum())
+
 analysis = df[(df["pricetype"] == "Retail") & (df["comparable_unit"])]
 
-print("rows loaded:", n0)
+print("rows loaded:", n0, "| rows after merge:", len(df), "| rows with no market match:", unmatched)
 print("rows kept for per-kg retail analysis:", len(analysis))
 print("rows flagged: aggregate =", int(df["is_aggregate"].sum()),
       "| flagged for review (kept) =", int(df["price_review"].sum()),
