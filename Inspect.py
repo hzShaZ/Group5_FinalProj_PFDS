@@ -152,7 +152,6 @@ print(
 
 print("\n=== 6. HOW VARIABLES CONNECT TO THE QUESTIONS ===")
 print("Q1 long-run rice trend -> date, commodity, pricetype, price, market_id")
-# Continuous panel filter for Q1
 early_years = df[df["year"] <= 2005]["market_id"].unique()
 rice_panel = df[
     (df["commodity"] == "Rice (regular, milled)")
