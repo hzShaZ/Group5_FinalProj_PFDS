@@ -21,9 +21,8 @@ df["price_review"] = np.where(df["price"] > 5 * med, True, False)
 
 df["comparable_unit"] = df["unit"] == "KG"
 
-df = df.drop(columns=["currency", "usdprice"])
-
-df = df.drop(columns=["market", "admin1", "admin2", "latitude", "longitude"])
+df = df.drop(columns=["currency", "usdprice"], errors="ignore")
+df = df.drop(columns=["market", "admin1", "admin2", "latitude", "longitude"], errors="ignore")
 df = df.merge(mk[["market_id", "market", "admin1", "admin2", "latitude", "longitude"]],
               on="market_id", how="left", validate="many_to_one")
 unmatched = int(df["market"].isna().sum())
