@@ -15,8 +15,7 @@ df["month"] = df["date"].dt.month
 for col in ["admin1", "admin2", "market", "commodity", "category", "unit", "pricetype", "priceflag"]:
     df[col] = df[col].str.strip()
 
-df["is_aggregate"] = df["priceflag"].str.contains("aggregate")
-
+df["is_aggregate"] = df["priceflag"].str.contains("aggregate", na=False)
 med = df.groupby("commodity")["price"].transform("median")
 df["price_review"] = np.where(df["price"] > 5 * med, True, False)
 
