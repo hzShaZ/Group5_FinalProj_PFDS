@@ -50,8 +50,7 @@ cov = df.groupby("year").agg(rows=("price", "size"),
 print(cov.to_string())
 
 print("\n--- possible outliers: price more than 5x its commodity median (to REVIEW, not auto-delete) ---")
-med = df.groupby("commodity")["price"].transform("median")
-flag = np.where(df["price"] > 5 * med, 1, 0)
+med = df.groupby(["commodity", "unit", "pricetype"])["price"].transform("median")flag = np.where(df["price"] > 5 * med, 1, 0)
 print("flagged rows:", int(flag.sum()))
 if flag.sum() > 0:
     print(df.loc[flag == 1, ["date", "market", "commodity", "unit", "price"]].head(5).to_string())
